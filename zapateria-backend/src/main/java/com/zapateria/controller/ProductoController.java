@@ -2,7 +2,6 @@ package com.zapateria.controller;
 
 import com.zapateria.model.Producto;
 import com.zapateria.service.ProductoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +14,20 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/productos")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ProductoController {
 
     /** Servicio de productos inyectado por constructor */
     private final ProductoService productoService;
+
+    /**
+     * Constructor para inyección de dependencias del servicio.
+     *
+     * @param productoService servicio de lógica de negocio
+     */
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
 
     /**
      * Lista todos los productos registrados en el sistema.

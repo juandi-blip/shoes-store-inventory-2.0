@@ -1,11 +1,6 @@
 package com.zapateria.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,9 +10,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "proveedor")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Proveedor {
 
     /** Identificador único del proveedor */
@@ -47,11 +39,70 @@ public class Proveedor {
 
     /** Fecha y hora de creación del registro */
     @Column(name = "fecha_creacion", updatable = false)
-    @CreationTimestamp
     private LocalDateTime fechaCreacion;
 
     /** Fecha y hora de la última actualización del registro */
     @Column(name = "fecha_actualizacion")
-    @UpdateTimestamp
     private LocalDateTime fechaActualizacion;
+
+    /** Constructor por defecto */
+    public Proveedor() {}
+
+    /** Constructor con todos los campos */
+    public Proveedor(Long id, String nombre, String contacto, String telefono,
+                     String email, String direccion, LocalDateTime fechaCreacion,
+                     LocalDateTime fechaActualizacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.contacto = contacto;
+        this.telefono = telefono;
+        this.email = email;
+        this.direccion = direccion;
+        this.fechaCreacion = fechaCreacion;
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
+    // ========== Getters y Setters ==========
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getContacto() { return contacto; }
+    public void setContacto(String contacto) { this.contacto = contacto; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    public LocalDateTime getFechaActualizacion() { return fechaActualizacion; }
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
+
+    /** Se asigna la fecha de creación antes de persistir si es null. */
+    @PrePersist
+    protected void onCreate() {
+        this.fechaCreacion = LocalDateTime.now();
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    /** Se actualiza la fecha de actualización antes de cada modificación. */
+    @PreUpdate
+    protected void onUpdate() {
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Proveedor{id=" + id + ", nombre='" + nombre + "', contacto='" + contacto + "'}";
+    }
 }

@@ -1,9 +1,6 @@
 package com.zapateria.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,9 +10,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "categoria")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Categoria {
 
     /** Identificador único de la categoría (clave primaria autoincremental). */
@@ -39,6 +33,36 @@ public class Categoria {
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
+    /** Constructor por defecto */
+    public Categoria() {}
+
+    /** Constructor con todos los campos */
+    public Categoria(Long id, String nombre, String descripcion,
+                     LocalDateTime fechaCreacion, LocalDateTime fechaActualizacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.fechaCreacion = fechaCreacion;
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
+    // ========== Getters y Setters ==========
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    public LocalDateTime getFechaActualizacion() { return fechaActualizacion; }
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
+
     /** Se asigna la fecha de creación antes de persistir si es null. */
     @PrePersist
     protected void onCreate() {
@@ -50,5 +74,10 @@ public class Categoria {
     @PreUpdate
     protected void onUpdate() {
         this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Categoria{id=" + id + ", nombre='" + nombre + "'}";
     }
 }

@@ -2,7 +2,6 @@ package com.zapateria.service;
 
 import com.zapateria.model.Producto;
 import com.zapateria.repository.ProductoRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +13,19 @@ import java.util.Optional;
  * y valida las reglas de negocio antes de interactuar con el repositorio.
  */
 @Service
-@RequiredArgsConstructor
 public class ProductoService {
 
     /** Repositorio de productos inyectado por constructor */
     private final ProductoRepository productoRepository;
+
+    /**
+     * Constructor para inyección de dependencias del repositorio.
+     *
+     * @param productoRepository repositorio de acceso a datos
+     */
+    public ProductoService(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
+    }
 
     /**
      * Obtiene la lista de todos los productos registrados.
