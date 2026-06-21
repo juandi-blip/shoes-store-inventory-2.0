@@ -1,0 +1,30 @@
+# === Backend ===
+zapateria-backend/target/
+zapateria-backend/.mvn/
+zapateria-backend/mvnw
+zapateria-backend/mvnw.cmd
+*.class
+*.jar
+*.war
+
+# === Frontend ===
+zapateria-frontend/node_modules/
+zapateria-frontend/dist/
+zapateria-frontend/.vite/
+
+# === IDE ===
+.vscode/
+.idea/
+*.iml
+*.iws
+
+# === Sistema ===
+.DS_Store
+Thumbs.db
+*.log
+
+# === OpenCode ===
+.agents/
+.claude/
+skills/
+skills-lock.json
