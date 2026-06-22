@@ -18,7 +18,39 @@ Sistema de gestión para una zapatería con módulos de:
 | Base de datos | MySQL 8 |
 | ORM | JPA/Hibernate |
 | HTTP Client | Axios |
-| Estilos | CSS Dark Premium |
+| Estilos | CSS Dark Monochromatic |
+
+## Diseño
+
+El sistema utiliza un diseño **Dark Monochromatic** inspirado eninterfaces premium de tiendas de calzado:
+
+### Paleta de Colores
+
+| Elemento | Color | Código |
+|----------|-------|--------|
+| Fondo principal | Negro profundo | `#0a0a0a` |
+| Fondo tarjetas | Gris oscuro | `#141414` |
+| Fondo elevado | Gris medio | `#1e1e1e` |
+| Fondo inputs | Gris oscuro | `#1a1a1a` |
+| Texto principal | Blanco | `#ffffff` |
+| Texto secundario | Gris claro | `#cccccc` |
+| Texto muted | Gris medio | `#888888` |
+| Bordes | Gris oscuro | `#2a2a2a` |
+| Acento | Índigo | `#6366f1` |
+| Peligro | Rojo | `#ef4444` |
+| Éxito | Verde | `#4ade80` |
+| Advertencia | Amarillo | `#fbbf24` |
+
+### Características Visuales
+
+- Tema oscuro completo (dark mode)
+- Bordes sutiles y sombras minimalistas
+- Botones con bordes redondeados (pill)
+- Tablas con hover sutil
+- Modales con efecto blur (backdrop-filter)
+- Transiciones suaves (150ms)
+- Tipografía Inter con pesos variados
+- Texto en mayúsculas con letter-spacing para labels
 
 ## Requisitos
 
@@ -113,13 +145,6 @@ GA7-220501096-AA3-EV01/
         ├── components/           # Componentes reutilizables
         └── services/             # Conexión API
 ```
-
-## Diseño
-
-El proyecto utiliza un tema **Dark Premium** con colores:
-- Fondo principal: `#0a0a0a`
-- Acentos dorados: `#c9a961`
-- Texto principal: `#ffffff`
 
 ## Notas
 
