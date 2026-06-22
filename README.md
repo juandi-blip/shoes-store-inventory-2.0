@@ -154,7 +154,7 @@ GA7-220501096-AA3-EV01/
 
 ## Autor
 
-Juan Diego - Programa ADSO SENA
+Juan David Florez - Programa ADSO SENA
 
 ## Repositorio
 
