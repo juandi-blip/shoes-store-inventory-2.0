@@ -2,34 +2,32 @@ import { useState, useEffect } from 'react'
 import api from '../services/api'
 
 /**
- * Página de gestión de categorías.
- * Permite listar, crear, editar y eliminar categorías de productos.
+ * Página de gestión de categorías de calzado.
+ * Permite listar, crear, editar y eliminar categorías.
  * Se conecta con la API REST del backend Spring Boot.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
  */
 function CategoriasPage() {
-  // Estado para almacenar la lista de categorías obtenida del backend
+  // Lista de categorías cargada desde el backend
   const [categorias, setCategorias] = useState([])
-  // Estado para controlar la visualización del spinner de carga
+  // Indicador de carga inicial
   const [loading, setLoading] = useState(true)
-  // Estado para almacenar mensajes de error
+  // Mensaje de error si falla alguna operación
   const [error, setError] = useState(null)
-  // Estado para controlar la visibilidad del modal de formulario
+  // Controla la visibilidad del modal de formulario
   const [showModal, setShowModal] = useState(false)
-  // Estado para almacenar la categoría que se está editando (null = nueva)
+  // Categoría en edición (null = nueva)
   const [categoriaActual, setCategoriaActual] = useState(null)
 
   /**
-   * Efecto que se ejecuta al montar el componente.
-   * Carga las categorías desde el backend.
+   * Carga todas las categorías al montar el componente.
    */
   useEffect(() => {
     cargarCategorias()
   }, [])
 
   /**
-   * Función para obtener todas las categorías desde la API.
-   * Maneja estados de carga y error.
+   * Obtiene todas las categorías desde la API REST.
    */
   const cargarCategorias = async () => {
     try {
@@ -46,9 +44,8 @@ function CategoriasPage() {
   }
 
   /**
-   * Función para eliminar una categoría por su ID.
-   * Solicita confirmación antes de proceder con la eliminación.
-   * @param {number} id - Identificador de la categoría a eliminar
+   * Elimina una categoría tras confirmación del usuario.
+   * @param {number} id - ID de la categoría a eliminar
    */
   const eliminarCategoria = async (id) => {
     const confirmar = window.confirm('¿Está seguro de que desea eliminar esta categoría?')
@@ -56,45 +53,36 @@ function CategoriasPage() {
 
     try {
       await api.delete(`/categorias/${id}`)
-      // Actualizar la lista de categorías después de eliminar
-      setCategorias(categorias.filter(c => c.id !== id))
+      setCategorias(categorias.filter(c => c.idCategoria !== id))
     } catch (err) {
       setError('Error al eliminar la categoría.')
       console.error('Error al eliminar categoría:', err)
     }
   }
 
-  /**
-   * Función para abrir el modal con los datos de una categoría existente.
-   * @param {Object} categoria - Objeto categoría a editar
-   */
+  /** Abre el modal en modo edición. */
   const abrirEditar = (categoria) => {
     setCategoriaActual(categoria)
     setShowModal(true)
   }
 
-  /**
-   * Función para abrir el modal vacío para crear una nueva categoría.
-   */
+  /** Abre el modal en modo creación. */
   const abrirCrear = () => {
     setCategoriaActual(null)
     setShowModal(true)
   }
 
   /**
-   * Función para guardar una categoría (crear o actualizar).
-   * @param {Object} datosCategoria - Datos de la categoría a guardar
+   * Guarda una categoría nueva o actualiza una existente.
+   * @param {Object} datosCategoria - Datos del formulario
    */
   const guardarCategoria = async (datosCategoria) => {
     try {
-      if (categoriaActual && categoriaActual.id) {
-        // Actualizar categoría existente
-        await api.put(`/categorias/${categoriaActual.id}`, datosCategoria)
+      if (categoriaActual && categoriaActual.idCategoria) {
+        await api.put(`/categorias/${categoriaActual.idCategoria}`, datosCategoria)
       } else {
-        // Crear nueva categoría
         await api.post('/categorias', datosCategoria)
       }
-      // Recargar la lista de categorías
       await cargarCategorias()
       setShowModal(false)
       setCategoriaActual(null)
@@ -104,10 +92,9 @@ function CategoriasPage() {
     }
   }
 
-  // Renderizado del componente
   return (
     <div>
-      {/* Encabezado de la página con botón para agregar nueva categoría */}
+      {/* Encabezado con título y botón de acción */}
       <div className="page-header">
         <h1 className="page-title">Categorías</h1>
         <button className="btn btn-primary" onClick={abrirCrear}>
@@ -115,41 +102,37 @@ function CategoriasPage() {
         </button>
       </div>
 
-      {/* Mensaje de error si ocurre algún problema */}
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
+      {/* Alerta de error */}
+      {error && <div className="error-message">{error}</div>}
 
-      {/* Indicador de carga */}
+      {/* Tabla de categorías o estado de carga */}
       {loading ? (
         <div className="loading">Cargando categorías...</div>
       ) : (
-        /* Tabla de categorías */
         <div className="table-container">
           <table className="data-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Descripción</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {categorias.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="empty-message">
-                    No hay categorías registradas.
+                  <td colSpan="3" className="empty-state-cell">
+                    <p className="empty-state-text">No hay categorías registradas.</p>
+                    <button className="btn btn-secondary" onClick={abrirCrear}>
+                      Agregar primera categoría
+                    </button>
                   </td>
                 </tr>
               ) : (
                 categorias.map((categoria) => (
-                  <tr key={categoria.id}>
-                    <td>{categoria.id}</td>
+                  <tr key={categoria.idCategoria}>
+                    <td>{categoria.idCategoria}</td>
                     <td>{categoria.nombre}</td>
-                    <td>{categoria.descripcion || '—'}</td>
                     <td>
                       <div className="actions-cell">
                         <button
@@ -160,7 +143,7 @@ function CategoriasPage() {
                         </button>
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => eliminarCategoria(categoria.id)}
+                          onClick={() => eliminarCategoria(categoria.idCategoria)}
                         >
                           Eliminar
                         </button>
@@ -174,7 +157,7 @@ function CategoriasPage() {
         </div>
       )}
 
-      {/* Modal de formulario para crear/editar categorías */}
+      {/* Modal de formulario para crear / editar categoría */}
       {showModal && (
         <CategoriaForm
           categoria={categoriaActual}
@@ -190,35 +173,26 @@ function CategoriasPage() {
 }
 
 /**
- * Componente de formulario para crear/editar categorías.
- * Se muestra como modal superpuesto a la página.
+ * Formulario modal para crear o editar una categoría.
+ * @param {Object}   categoria  - Categoría a editar (null si es nueva)
+ * @param {Function} onGuardar  - Callback al confirmar
+ * @param {Function} onCancelar - Callback al cancelar
  */
 function CategoriaForm({ categoria, onGuardar, onCancelar }) {
-  // Estado local del formulario
+  // Estado del formulario
   const [formulario, setFormulario] = useState({
     nombre: categoria?.nombre || '',
-    descripcion: categoria?.descripcion || '',
   })
 
-  /**
-   * Función para manejar los cambios en los campos del formulario.
-   * @param {Event} e - Evento del input
-   */
+  /** Actualiza el campo del formulario. */
   const manejarCambio = (e) => {
     const { name, value } = e.target
-    setFormulario(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setFormulario(prev => ({ ...prev, [name]: value }))
   }
 
-  /**
-   * Función para manejar el envío del formulario.
-   * @param {Event} e - Evento de submit
-   */
+  /** Valida y envía el formulario. */
   const manejarEnvio = (e) => {
     e.preventDefault()
-    // Validación básica de campos requeridos
     if (!formulario.nombre.trim()) {
       alert('El nombre de la categoría es obligatorio.')
       return
@@ -233,39 +207,25 @@ function CategoriaForm({ categoria, onGuardar, onCancelar }) {
           <h2 className="modal-title">
             {categoria ? 'Editar Categoría' : 'Nueva Categoría'}
           </h2>
-          <button className="modal-close" onClick={onCancelar}>
-            ×
-          </button>
+          <button className="modal-close" onClick={onCancelar}>×</button>
         </div>
 
         <form onSubmit={manejarEnvio}>
-          {/* Campo: Nombre de la categoría */}
-          <div className="form-group">
-            <label htmlFor="nombre">Nombre *</label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formulario.nombre}
-              onChange={manejarCambio}
-              placeholder="Ingrese el nombre de la categoría"
-              required
-            />
+          <div className="form-body">
+            <div className="form-group">
+              <label htmlFor="nombre">Nombre *</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={formulario.nombre}
+                onChange={manejarCambio}
+                placeholder="Ej. Botas, Sandalias, Tenis..."
+                required
+              />
+            </div>
           </div>
 
-          {/* Campo: Descripción */}
-          <div className="form-group">
-            <label htmlFor="descripcion">Descripción</label>
-            <textarea
-              id="descripcion"
-              name="descripcion"
-              value={formulario.descripcion}
-              onChange={manejarCambio}
-              placeholder="Ingrese la descripción de la categoría"
-            />
-          </div>
-
-          {/* Botones de acción del formulario */}
           <div className="form-actions">
             <button type="button" className="btn btn-secondary" onClick={onCancelar}>
               Cancelar

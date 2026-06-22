@@ -28,3 +28,10 @@ Thumbs.db
 .claude/
 skills/
 skills-lock.json
+
+# === Temporary Files ===
+*.py
+*.png
+*.jpg
+*.jpeg
+.playwright-mcp/

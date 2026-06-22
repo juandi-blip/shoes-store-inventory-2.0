@@ -1,46 +1,84 @@
+import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import api from '../services/api'
 
 /**
- * Componente de barra de navegación principal.
- * Permite navegar entre las secciones del sistema de gestión de zapatería.
- * Utiliza NavLink de React Router para resaltar la ruta activa.
+ * Barra de navegación principal del sistema de zapatería.
+ * Muestra el estado de conexión con el backend en tiempo real.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
  */
 function Navbar() {
+  // Estado de conexión con el backend (true = conectado)
+  const [conectado, setConectado] = useState(false)
+
+  /**
+   * Verifica la conexión con el backend al montar el componente.
+   * Intenta obtener las categorías como prueba de conectividad.
+   */
+  useEffect(() => {
+    const verificarConexion = async () => {
+      try {
+        await api.get('/categorias')
+        setConectado(true)
+      } catch {
+        setConectado(false)
+      }
+    }
+
+    verificarConexion()
+    // Reverificar cada 30 segundos
+    const intervalo = setInterval(verificarConexion, 30000)
+    return () => clearInterval(intervalo)
+  }, [])
+
   return (
     <nav className="navbar">
-      {/* Enlace al inicio / marca del sistema */}
+      {/* Marca / nombre del sistema */}
       <NavLink to="/" className="navbar-brand">
         Zapatería
       </NavLink>
 
-      {/* Enlaces de navegación a los módulos del sistema */}
-      <div className="navbar-links">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) => isActive ? 'active' : ''}
-        >
-          Inicio
-        </NavLink>
-        <NavLink
-          to="/productos"
-          className={({ isActive }) => isActive ? 'active' : ''}
-        >
-          Productos
-        </NavLink>
-        <NavLink
-          to="/categorias"
-          className={({ isActive }) => isActive ? 'active' : ''}
-        >
-          Categorías
-        </NavLink>
-        <NavLink
-          to="/proveedores"
-          className={({ isActive }) => isActive ? 'active' : ''}
-        >
-          Proveedores
-        </NavLink>
+      {/* Módulos de navegación */}
+      <ul className="navbar-nav">
+        <li>
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Inicio
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/productos"
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Productos
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/categorias"
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Categorías
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/proveedores"
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Proveedores
+          </NavLink>
+        </li>
+      </ul>
+
+      {/* Indicador de estado de conexión con el backend */}
+      <div className="connection-badge">
+        <span className={`connection-dot ${conectado ? 'online' : ''}`} />
+        Conexión: {conectado ? 'Online' : 'Offline'}
       </div>
     </nav>
   )

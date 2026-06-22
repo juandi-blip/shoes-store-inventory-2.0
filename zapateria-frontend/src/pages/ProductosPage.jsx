@@ -2,30 +2,28 @@ import { useState, useEffect } from 'react'
 import api from '../services/api'
 
 /**
- * Página de gestión de productos.
+ * Página de gestión de productos (inventario de calzado).
  * Permite listar, crear, editar y eliminar productos del sistema.
  * Se conecta con la API REST del backend Spring Boot.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
  */
 function ProductosPage() {
-  // Estado para almacenar la lista de productos obtenida del backend
+  // Lista de productos cargada desde el backend
   const [productos, setProductos] = useState([])
-  // Estado para controlar la visualización del spinner de carga
+  // Indicador de carga inicial
   const [loading, setLoading] = useState(true)
-  // Estado para almacenar mensajes de error
+  // Mensaje de error si falla alguna operación
   const [error, setError] = useState(null)
-  // Estado para controlar la visibilidad del modal de formulario
+  // Controla la visibilidad del modal de formulario
   const [showModal, setShowModal] = useState(false)
-  // Estado para almacenar el producto que se está editando (null = nuevo)
+  // Producto en edición (null = nuevo)
   const [productoActual, setProductoActual] = useState(null)
-  // Estado para almacenar la lista de categorías (para el select)
+  // Listas de categorías y proveedores para los selectores del formulario
   const [categorias, setCategorias] = useState([])
-  // Estado para almacenar la lista de proveedores (para el select)
   const [proveedores, setProveedores] = useState([])
 
   /**
-   * Efecto que se ejecuta al montar el componente.
-   * Carga los productos, categorías y proveedores desde el backend.
+   * Carga inicial de datos al montar el componente.
    */
   useEffect(() => {
     cargarProductos()
@@ -34,8 +32,7 @@ function ProductosPage() {
   }, [])
 
   /**
-   * Función para obtener todos los productos desde la API.
-   * Maneja estados de carga y error.
+   * Obtiene todos los productos desde la API REST.
    */
   const cargarProductos = async () => {
     try {
@@ -51,9 +48,7 @@ function ProductosPage() {
     }
   }
 
-  /**
-   * Función para obtener todas las categorías desde la API.
-   */
+  /** Obtiene todas las categorías para el selector del formulario. */
   const cargarCategorias = async () => {
     try {
       const respuesta = await api.get('/categorias')
@@ -63,9 +58,7 @@ function ProductosPage() {
     }
   }
 
-  /**
-   * Función para obtener todos los proveedores desde la API.
-   */
+  /** Obtiene todos los proveedores para el selector del formulario. */
   const cargarProveedores = async () => {
     try {
       const respuesta = await api.get('/proveedores')
@@ -76,9 +69,8 @@ function ProductosPage() {
   }
 
   /**
-   * Función para eliminar un producto por su ID.
-   * Solicita confirmación antes de proceder con la eliminación.
-   * @param {number} id - Identificador del producto a eliminar
+   * Elimina un producto tras confirmación del usuario.
+   * @param {number} id - ID del producto a eliminar
    */
   const eliminarProducto = async (id) => {
     const confirmar = window.confirm('¿Está seguro de que desea eliminar este producto?')
@@ -86,45 +78,36 @@ function ProductosPage() {
 
     try {
       await api.delete(`/productos/${id}`)
-      // Actualizar la lista de productos después de eliminar
-      setProductos(productos.filter(p => p.id !== id))
+      setProductos(productos.filter(p => p.idProducto !== id))
     } catch (err) {
       setError('Error al eliminar el producto.')
       console.error('Error al eliminar producto:', err)
     }
   }
 
-  /**
-   * Función para abrir el modal con los datos de un producto existente.
-   * @param {Object} producto - Objeto producto a editar
-   */
+  /** Abre el modal en modo edición con los datos del producto seleccionado. */
   const abrirEditar = (producto) => {
     setProductoActual(producto)
     setShowModal(true)
   }
 
-  /**
-   * Función para abrir el modal vacío para crear un nuevo producto.
-   */
+  /** Abre el modal en modo creación (formulario vacío). */
   const abrirCrear = () => {
     setProductoActual(null)
     setShowModal(true)
   }
 
   /**
-   * Función para guardar un producto (crear o actualizar).
-   * @param {Object} datosProducto - Datos del producto a guardar
+   * Guarda un producto nuevo o actualiza uno existente.
+   * @param {Object} datosProducto - Datos del formulario
    */
   const guardarProducto = async (datosProducto) => {
     try {
-      if (productoActual && productoActual.id) {
-        // Actualizar producto existente
-        await api.put(`/productos/${productoActual.id}`, datosProducto)
+      if (productoActual && productoActual.idProducto) {
+        await api.put(`/productos/${productoActual.idProducto}`, datosProducto)
       } else {
-        // Crear nuevo producto
         await api.post('/productos', datosProducto)
       }
-      // Recargar la lista de productos
       await cargarProductos()
       setShowModal(false)
       setProductoActual(null)
@@ -135,48 +118,35 @@ function ProductosPage() {
   }
 
   /**
-   * Función auxiliar para obtener el nombre de una categoría por su ID.
-   * @param {number} id - Identificador de la categoría
-   * @returns {string} Nombre de la categoría o 'N/A'
+   * Formatea un valor numérico como moneda colombiana (COP).
+   * @param {number} valor - Monto a formatear
+   * @returns {string} Valor formateado, ej. "$ 1.234.567"
    */
-  const obtenerNombreCategoria = (id) => {
-    const categoria = categorias.find(c => c.id === id)
-    return categoria ? categoria.nombre : 'N/A'
+  const formatearPrecio = (valor) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+    }).format(valor)
   }
 
-  /**
-   * Función auxiliar para obtener el nombre de un proveedor por su ID.
-   * @param {number} id - Identificador del proveedor
-   * @returns {string} Nombre del proveedor o 'N/A'
-   */
-  const obtenerNombreProveedor = (id) => {
-    const proveedor = proveedores.find(p => p.id === id)
-    return proveedor ? proveedor.nombre : 'N/A'
-  }
-
-  // Renderizado del componente
   return (
     <div>
-      {/* Encabezado de la página con botón para agregar nuevo producto */}
+      {/* Encabezado con título y botón de acción */}
       <div className="page-header">
-        <h1 className="page-title">Productos</h1>
+        <h1 className="page-title">Inventario de Calzado</h1>
         <button className="btn btn-primary" onClick={abrirCrear}>
-          + Nuevo Producto
+          + Registrar Modelo
         </button>
       </div>
 
-      {/* Mensaje de error si ocurre algún problema */}
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
+      {/* Alerta de error */}
+      {error && <div className="error-message">{error}</div>}
 
-      {/* Indicador de carga */}
+      {/* Tabla de productos o estado de carga */}
       {loading ? (
-        <div className="loading">Cargando productos...</div>
+        <div className="loading">Cargando inventario...</div>
       ) : (
-        /* Tabla de productos */
         <div className="table-container">
           <table className="data-table">
             <thead>
@@ -186,8 +156,6 @@ function ProductosPage() {
                 <th>Descripción</th>
                 <th>Precio</th>
                 <th>Stock</th>
-                <th>Talla</th>
-                <th>Color</th>
                 <th>Categoría</th>
                 <th>Proveedor</th>
                 <th>Acciones</th>
@@ -196,22 +164,25 @@ function ProductosPage() {
             <tbody>
               {productos.length === 0 ? (
                 <tr>
-                  <td colSpan="10" className="empty-message">
-                    No hay productos registrados.
+                  <td colSpan="8" className="empty-state-cell">
+                    <p className="empty-state-text">
+                      No hay productos registrados en el inventario.
+                    </p>
+                    <button className="btn btn-secondary" onClick={abrirCrear}>
+                      Comenzar a añadir
+                    </button>
                   </td>
                 </tr>
               ) : (
                 productos.map((producto) => (
-                  <tr key={producto.id}>
-                    <td>{producto.id}</td>
+                  <tr key={producto.idProducto}>
+                    <td>{producto.idProducto}</td>
                     <td>{producto.nombre}</td>
                     <td>{producto.descripcion || '—'}</td>
-                    <td>${producto.precio?.toLocaleString() || '0'}</td>
-                    <td>{producto.stock || 0}</td>
-                    <td>{producto.talla || '—'}</td>
-                    <td>{producto.color || '—'}</td>
-                    <td>{obtenerNombreCategoria(producto.categoriaId)}</td>
-                    <td>{obtenerNombreProveedor(producto.proveedorId)}</td>
+                    <td>{formatearPrecio(producto.precio)}</td>
+                    <td>{producto.stock ?? 0}</td>
+                    <td>{producto.categoria?.nombre || '—'}</td>
+                    <td>{producto.proveedor?.nombre || '—'}</td>
                     <td>
                       <div className="actions-cell">
                         <button
@@ -222,7 +193,7 @@ function ProductosPage() {
                         </button>
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => eliminarProducto(producto.id)}
+                          onClick={() => eliminarProducto(producto.idProducto)}
                         >
                           Eliminar
                         </button>
@@ -236,7 +207,7 @@ function ProductosPage() {
         </div>
       )}
 
-      {/* Modal de formulario para crear/editar productos */}
+      {/* Modal de formulario para crear / editar producto */}
       {showModal && (
         <ProductoForm
           producto={productoActual}
@@ -254,185 +225,161 @@ function ProductosPage() {
 }
 
 /**
- * Componente de formulario para crear/editar productos.
- * Se muestra como modal superpuesto a la página.
+ * Formulario modal para crear o editar un producto.
+ * @param {Object} producto - Producto a editar (null si es nuevo)
+ * @param {Array}  categorias - Lista de categorías disponibles
+ * @param {Array}  proveedores - Lista de proveedores disponibles
+ * @param {Function} onGuardar - Callback al confirmar el formulario
+ * @param {Function} onCancelar - Callback al cancelar
  */
 function ProductoForm({ producto, categorias, proveedores, onGuardar, onCancelar }) {
-  // Estado local del formulario
+  // Estado del formulario inicializado con los datos del producto (si existe)
   const [formulario, setFormulario] = useState({
-    nombre: producto?.nombre || '',
+    nombre:      producto?.nombre || '',
     descripcion: producto?.descripcion || '',
-    precio: producto?.precio || '',
-    stock: producto?.stock || '',
-    talla: producto?.talla || '',
-    color: producto?.color || '',
-    categoriaId: producto?.categoriaId || '',
-    proveedorId: producto?.proveedorId || '',
+    precio:      producto?.precio || '',
+    stock:       producto?.stock || '',
+    idCategoria: producto?.categoria?.idCategoria || '',
+    idProveedor: producto?.proveedor?.idProveedor || '',
   })
 
-  /**
-   * Función para manejar los cambios en los campos del formulario.
-   * @param {Event} e - Evento del input
-   */
+  /** Actualiza el estado del formulario ante cualquier cambio de campo. */
   const manejarCambio = (e) => {
     const { name, value } = e.target
-    setFormulario(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setFormulario(prev => ({ ...prev, [name]: value }))
   }
 
-  /**
-   * Función para manejar el envío del formulario.
-   * @param {Event} e - Evento de submit
-   */
+  /** Valida y envía el formulario al componente padre. */
   const manejarEnvio = (e) => {
     e.preventDefault()
-    // Validación básica de campos requeridos
     if (!formulario.nombre.trim()) {
       alert('El nombre del producto es obligatorio.')
       return
     }
-    onGuardar(formulario)
+    // Construye el payload con los tipos de datos correctos para la API
+    const payload = {
+      nombre:      formulario.nombre,
+      descripcion: formulario.descripcion,
+      precio:      parseFloat(formulario.precio) || 0,
+      stock:       parseInt(formulario.stock) || 0,
+      categoria:   { idCategoria: parseInt(formulario.idCategoria) },
+      proveedor:   { idProveedor: parseInt(formulario.idProveedor) },
+    }
+    onGuardar(payload)
   }
 
   return (
     <div className="modal-overlay">
       <div className="modal">
+        {/* Encabezado del modal */}
         <div className="modal-header">
           <h2 className="modal-title">
             {producto ? 'Editar Producto' : 'Nuevo Producto'}
           </h2>
-          <button className="modal-close" onClick={onCancelar}>
-            ×
-          </button>
+          <button className="modal-close" onClick={onCancelar}>×</button>
         </div>
 
         <form onSubmit={manejarEnvio}>
-          {/* Campo: Nombre del producto */}
-          <div className="form-group">
-            <label htmlFor="nombre">Nombre *</label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formulario.nombre}
-              onChange={manejarCambio}
-              placeholder="Ingrese el nombre del producto"
-              required
-            />
-          </div>
-
-          {/* Campo: Descripción */}
-          <div className="form-group">
-            <label htmlFor="descripcion">Descripción</label>
-            <textarea
-              id="descripcion"
-              name="descripcion"
-              value={formulario.descripcion}
-              onChange={manejarCambio}
-              placeholder="Ingrese la descripción del producto"
-            />
-          </div>
-
-          {/* Campos de precio y stock en fila */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="form-body">
+            {/* Nombre del calzado */}
             <div className="form-group">
-              <label htmlFor="precio">Precio</label>
-              <input
-                type="number"
-                id="precio"
-                name="precio"
-                value={formulario.precio}
-                onChange={manejarCambio}
-                placeholder="0"
-                min="0"
-                step="0.01"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="stock">Stock</label>
-              <input
-                type="number"
-                id="stock"
-                name="stock"
-                value={formulario.stock}
-                onChange={manejarCambio}
-                placeholder="0"
-                min="0"
-              />
-            </div>
-          </div>
-
-          {/* Campos de talla y color en fila */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div className="form-group">
-              <label htmlFor="talla">Talla</label>
+              <label htmlFor="nombre">Nombre del Calzado *</label>
               <input
                 type="text"
-                id="talla"
-                name="talla"
-                value={formulario.talla}
+                id="nombre"
+                name="nombre"
+                value={formulario.nombre}
                 onChange={manejarCambio}
-                placeholder="Ej: 42"
+                placeholder="Ej. Air Max 90 Black"
+                required
               />
             </div>
+
+            {/* Descripción */}
             <div className="form-group">
-              <label htmlFor="color">Color</label>
-              <input
-                type="text"
-                id="color"
-                name="color"
-                value={formulario.color}
+              <label htmlFor="descripcion">Descripción</label>
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                value={formulario.descripcion}
                 onChange={manejarCambio}
-                placeholder="Ej: Negro"
+                placeholder="Ej. Silueta retro, cámara de aire visible, amortiguación premium..."
               />
+            </div>
+
+            {/* Precio y Stock en dos columnas */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="precio">Precio (COP) *</label>
+                <input
+                  type="number"
+                  id="precio"
+                  name="precio"
+                  value={formulario.precio}
+                  onChange={manejarCambio}
+                  placeholder="0.00"
+                  min="0"
+                  step="100"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="stock">Stock Inicial *</label>
+                <input
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value={formulario.stock}
+                  onChange={manejarCambio}
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            {/* Categoría y Proveedor en dos columnas */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="idCategoria">Categoría *</label>
+                <select
+                  id="idCategoria"
+                  name="idCategoria"
+                  value={formulario.idCategoria}
+                  onChange={manejarCambio}
+                >
+                  <option value="">Seleccione...</option>
+                  {categorias.map((cat) => (
+                    <option key={cat.idCategoria} value={cat.idCategoria}>
+                      {cat.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="idProveedor">Proveedor *</label>
+                <select
+                  id="idProveedor"
+                  name="idProveedor"
+                  value={formulario.idProveedor}
+                  onChange={manejarCambio}
+                >
+                  <option value="">Seleccione...</option>
+                  {proveedores.map((prov) => (
+                    <option key={prov.idProveedor} value={prov.idProveedor}>
+                      {prov.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
-          {/* Selector de categoría */}
-          <div className="form-group">
-            <label htmlFor="categoriaId">Categoría</label>
-            <select
-              id="categoriaId"
-              name="categoriaId"
-              value={formulario.categoriaId}
-              onChange={manejarCambio}
-            >
-              <option value="">Seleccione una categoría</option>
-              {categorias.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Selector de proveedor */}
-          <div className="form-group">
-            <label htmlFor="proveedorId">Proveedor</label>
-            <select
-              id="proveedorId"
-              name="proveedorId"
-              value={formulario.proveedorId}
-              onChange={manejarCambio}
-            >
-              <option value="">Seleccione un proveedor</option>
-              {proveedores.map((prov) => (
-                <option key={prov.id} value={prov.id}>
-                  {prov.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Botones de acción del formulario */}
+          {/* Botones de acción */}
           <div className="form-actions">
             <button type="button" className="btn btn-secondary" onClick={onCancelar}>
               Cancelar
             </button>
             <button type="submit" className="btn btn-primary">
-              {producto ? 'Actualizar' : 'Crear'}
+              {producto ? 'Actualizar' : 'Guardar Calzado'}
             </button>
           </div>
         </form>

@@ -2,34 +2,32 @@ import { useState, useEffect } from 'react'
 import api from '../services/api'
 
 /**
- * Página de gestión de proveedores.
- * Permite listar, crear, editar y eliminar proveedores del sistema.
+ * Página de gestión de proveedores de calzado.
+ * Permite listar, crear, editar y eliminar proveedores.
  * Se conecta con la API REST del backend Spring Boot.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
  */
 function ProveedoresPage() {
-  // Estado para almacenar la lista de proveedores obtenida del backend
+  // Lista de proveedores cargada desde el backend
   const [proveedores, setProveedores] = useState([])
-  // Estado para controlar la visualización del spinner de carga
+  // Indicador de carga inicial
   const [loading, setLoading] = useState(true)
-  // Estado para almacenar mensajes de error
+  // Mensaje de error si falla alguna operación
   const [error, setError] = useState(null)
-  // Estado para controlar la visibilidad del modal de formulario
+  // Controla la visibilidad del modal de formulario
   const [showModal, setShowModal] = useState(false)
-  // Estado para almacenar el proveedor que se está editando (null = nuevo)
+  // Proveedor en edición (null = nuevo)
   const [proveedorActual, setProveedorActual] = useState(null)
 
   /**
-   * Efecto que se ejecuta al montar el componente.
-   * Carga los proveedores desde el backend.
+   * Carga todos los proveedores al montar el componente.
    */
   useEffect(() => {
     cargarProveedores()
   }, [])
 
   /**
-   * Función para obtener todos los proveedores desde la API.
-   * Maneja estados de carga y error.
+   * Obtiene todos los proveedores desde la API REST.
    */
   const cargarProveedores = async () => {
     try {
@@ -46,9 +44,8 @@ function ProveedoresPage() {
   }
 
   /**
-   * Función para eliminar un proveedor por su ID.
-   * Solicita confirmación antes de proceder con la eliminación.
-   * @param {number} id - Identificador del proveedor a eliminar
+   * Elimina un proveedor tras confirmación del usuario.
+   * @param {number} id - ID del proveedor a eliminar
    */
   const eliminarProveedor = async (id) => {
     const confirmar = window.confirm('¿Está seguro de que desea eliminar este proveedor?')
@@ -56,45 +53,36 @@ function ProveedoresPage() {
 
     try {
       await api.delete(`/proveedores/${id}`)
-      // Actualizar la lista de proveedores después de eliminar
-      setProveedores(proveedores.filter(p => p.id !== id))
+      setProveedores(proveedores.filter(p => p.idProveedor !== id))
     } catch (err) {
       setError('Error al eliminar el proveedor.')
       console.error('Error al eliminar proveedor:', err)
     }
   }
 
-  /**
-   * Función para abrir el modal con los datos de un proveedor existente.
-   * @param {Object} proveedor - Objeto proveedor a editar
-   */
+  /** Abre el modal en modo edición. */
   const abrirEditar = (proveedor) => {
     setProveedorActual(proveedor)
     setShowModal(true)
   }
 
-  /**
-   * Función para abrir el modal vacío para crear un nuevo proveedor.
-   */
+  /** Abre el modal en modo creación. */
   const abrirCrear = () => {
     setProveedorActual(null)
     setShowModal(true)
   }
 
   /**
-   * Función para guardar un proveedor (crear o actualizar).
-   * @param {Object} datosProveedor - Datos del proveedor a guardar
+   * Guarda un proveedor nuevo o actualiza uno existente.
+   * @param {Object} datosProveedor - Datos del formulario
    */
   const guardarProveedor = async (datosProveedor) => {
     try {
-      if (proveedorActual && proveedorActual.id) {
-        // Actualizar proveedor existente
-        await api.put(`/proveedores/${proveedorActual.id}`, datosProveedor)
+      if (proveedorActual && proveedorActual.idProveedor) {
+        await api.put(`/proveedores/${proveedorActual.idProveedor}`, datosProveedor)
       } else {
-        // Crear nuevo proveedor
         await api.post('/proveedores', datosProveedor)
       }
-      // Recargar la lista de proveedores
       await cargarProveedores()
       setShowModal(false)
       setProveedorActual(null)
@@ -104,10 +92,9 @@ function ProveedoresPage() {
     }
   }
 
-  // Renderizado del componente
   return (
     <div>
-      {/* Encabezado de la página con botón para agregar nuevo proveedor */}
+      {/* Encabezado con título y botón de acción */}
       <div className="page-header">
         <h1 className="page-title">Proveedores</h1>
         <button className="btn btn-primary" onClick={abrirCrear}>
@@ -115,27 +102,20 @@ function ProveedoresPage() {
         </button>
       </div>
 
-      {/* Mensaje de error si ocurre algún problema */}
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
+      {/* Alerta de error */}
+      {error && <div className="error-message">{error}</div>}
 
-      {/* Indicador de carga */}
+      {/* Tabla de proveedores o estado de carga */}
       {loading ? (
         <div className="loading">Cargando proveedores...</div>
       ) : (
-        /* Tabla de proveedores */
         <div className="table-container">
           <table className="data-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Contacto</th>
                 <th>Teléfono</th>
-                <th>Email</th>
                 <th>Dirección</th>
                 <th>Acciones</th>
               </tr>
@@ -143,18 +123,19 @@ function ProveedoresPage() {
             <tbody>
               {proveedores.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="empty-message">
-                    No hay proveedores registrados.
+                  <td colSpan="5" className="empty-state-cell">
+                    <p className="empty-state-text">No hay proveedores registrados.</p>
+                    <button className="btn btn-secondary" onClick={abrirCrear}>
+                      Agregar primer proveedor
+                    </button>
                   </td>
                 </tr>
               ) : (
                 proveedores.map((proveedor) => (
-                  <tr key={proveedor.id}>
-                    <td>{proveedor.id}</td>
+                  <tr key={proveedor.idProveedor}>
+                    <td>{proveedor.idProveedor}</td>
                     <td>{proveedor.nombre}</td>
-                    <td>{proveedor.contacto || '—'}</td>
                     <td>{proveedor.telefono || '—'}</td>
-                    <td>{proveedor.email || '—'}</td>
                     <td>{proveedor.direccion || '—'}</td>
                     <td>
                       <div className="actions-cell">
@@ -166,7 +147,7 @@ function ProveedoresPage() {
                         </button>
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => eliminarProveedor(proveedor.id)}
+                          onClick={() => eliminarProveedor(proveedor.idProveedor)}
                         >
                           Eliminar
                         </button>
@@ -180,7 +161,7 @@ function ProveedoresPage() {
         </div>
       )}
 
-      {/* Modal de formulario para crear/editar proveedores */}
+      {/* Modal de formulario para crear / editar proveedor */}
       {showModal && (
         <ProveedorForm
           proveedor={proveedorActual}
@@ -196,38 +177,28 @@ function ProveedoresPage() {
 }
 
 /**
- * Componente de formulario para crear/editar proveedores.
- * Se muestra como modal superpuesto a la página.
+ * Formulario modal para crear o editar un proveedor.
+ * @param {Object}   proveedor  - Proveedor a editar (null si es nuevo)
+ * @param {Function} onGuardar  - Callback al confirmar
+ * @param {Function} onCancelar - Callback al cancelar
  */
 function ProveedorForm({ proveedor, onGuardar, onCancelar }) {
-  // Estado local del formulario
+  // Estado del formulario inicializado con los datos del proveedor (si existe)
   const [formulario, setFormulario] = useState({
-    nombre: proveedor?.nombre || '',
-    contacto: proveedor?.contacto || '',
-    telefono: proveedor?.telefono || '',
-    email: proveedor?.email || '',
+    nombre:    proveedor?.nombre || '',
+    telefono:  proveedor?.telefono || '',
     direccion: proveedor?.direccion || '',
   })
 
-  /**
-   * Función para manejar los cambios en los campos del formulario.
-   * @param {Event} e - Evento del input
-   */
+  /** Actualiza el campo del formulario. */
   const manejarCambio = (e) => {
     const { name, value } = e.target
-    setFormulario(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setFormulario(prev => ({ ...prev, [name]: value }))
   }
 
-  /**
-   * Función para manejar el envío del formulario.
-   * @param {Event} e - Evento de submit
-   */
+  /** Valida y envía el formulario. */
   const manejarEnvio = (e) => {
     e.preventDefault()
-    // Validación básica de campos requeridos
     if (!formulario.nombre.trim()) {
       alert('El nombre del proveedor es obligatorio.')
       return
@@ -242,41 +213,26 @@ function ProveedorForm({ proveedor, onGuardar, onCancelar }) {
           <h2 className="modal-title">
             {proveedor ? 'Editar Proveedor' : 'Nuevo Proveedor'}
           </h2>
-          <button className="modal-close" onClick={onCancelar}>
-            ×
-          </button>
+          <button className="modal-close" onClick={onCancelar}>×</button>
         </div>
 
         <form onSubmit={manejarEnvio}>
-          {/* Campo: Nombre del proveedor */}
-          <div className="form-group">
-            <label htmlFor="nombre">Nombre *</label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formulario.nombre}
-              onChange={manejarCambio}
-              placeholder="Ingrese el nombre del proveedor"
-              required
-            />
-          </div>
+          <div className="form-body">
+            {/* Nombre del proveedor */}
+            <div className="form-group">
+              <label htmlFor="nombre">Nombre *</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={formulario.nombre}
+                onChange={manejarCambio}
+                placeholder="Ej. Nike, Adidas, Puma..."
+                required
+              />
+            </div>
 
-          {/* Campo: Persona de contacto */}
-          <div className="form-group">
-            <label htmlFor="contacto">Contacto</label>
-            <input
-              type="text"
-              id="contacto"
-              name="contacto"
-              value={formulario.contacto}
-              onChange={manejarCambio}
-              placeholder="Nombre de la persona de contacto"
-            />
-          </div>
-
-          {/* Campos de teléfono y email en fila */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            {/* Teléfono de contacto */}
             <div className="form-group">
               <label htmlFor="telefono">Teléfono</label>
               <input
@@ -285,36 +241,24 @@ function ProveedorForm({ proveedor, onGuardar, onCancelar }) {
                 name="telefono"
                 value={formulario.telefono}
                 onChange={manejarCambio}
-                placeholder="Ej: 300 123 4567"
+                placeholder="Ej. 300 123 4567"
               />
             </div>
+
+            {/* Dirección del proveedor */}
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="direccion">Dirección</label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={formulario.email}
+                type="text"
+                id="direccion"
+                name="direccion"
+                value={formulario.direccion}
                 onChange={manejarCambio}
-                placeholder="correo@ejemplo.com"
+                placeholder="Dirección completa del proveedor"
               />
             </div>
           </div>
 
-          {/* Campo: Dirección */}
-          <div className="form-group">
-            <label htmlFor="direccion">Dirección</label>
-            <input
-              type="text"
-              id="direccion"
-              name="direccion"
-              value={formulario.direccion}
-              onChange={manejarCambio}
-              placeholder="Dirección completa del proveedor"
-            />
-          </div>
-
-          {/* Botones de acción del formulario */}
           <div className="form-actions">
             <button type="button" className="btn btn-secondary" onClick={onCancelar}>
               Cancelar

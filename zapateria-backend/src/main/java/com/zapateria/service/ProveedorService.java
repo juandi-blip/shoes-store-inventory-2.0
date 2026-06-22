@@ -68,9 +68,7 @@ public class ProveedorService {
                 .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con id: " + id));
 
         existente.setNombre(proveedorActualizado.getNombre());
-        existente.setContacto(proveedorActualizado.getContacto());
         existente.setTelefono(proveedorActualizado.getTelefono());
-        existente.setEmail(proveedorActualizado.getEmail());
         existente.setDireccion(proveedorActualizado.getDireccion());
 
         return proveedorRepository.save(existente);

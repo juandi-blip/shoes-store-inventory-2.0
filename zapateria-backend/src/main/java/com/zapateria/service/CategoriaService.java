@@ -67,7 +67,6 @@ public class CategoriaService {
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada con id: " + id));
 
         existente.setNombre(categoriaActualizada.getNombre());
-        existente.setDescripcion(categoriaActualizada.getDescripcion());
 
         return categoriaRepository.save(existente);
     }
