@@ -23,11 +23,12 @@ zapateria-frontend/.vite/
 Thumbs.db
 *.log
 
-# === OpenCode ===
+# === Herramientas de desarrollo ===
 .agents/
 .claude/
 skills/
 skills-lock.json
+CLAUDE.md
 
 # === Temporary Files ===
 *.py

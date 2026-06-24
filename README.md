@@ -1,7 +1,7 @@
 # Shoes Store — Sistema de Gestión de Inventario
 
 Evidencia de aprendizaje **GA7-220501096-AA3-EV01** — Codificación de módulos del software.  
-Programa Análisis y Desarrollo de Software (ADSO), ficha 228118, SENA.  
+Programa Análisis y Desarrollo de Software (ADSO), ficha 3186657, SENA.  
 Aprendiz: **Juan David Florez**
 
 ## Descripción
