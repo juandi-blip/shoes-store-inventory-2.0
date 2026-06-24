@@ -1,0 +1,9 @@
+Repositorio GitHub — Shoes Store Sistema de Gestión de Inventario
+=================================================================
+
+Enlace: https://github.com/juandi-blip/shoes-store-inventory-2.0
+
+Aprendiz: Juan David Florez
+Ficha: 3186657
+Programa: Análisis y Desarrollo de Software (ADSO) — SENA
+Evidencia: GA7-220501096-AA3-EV01
