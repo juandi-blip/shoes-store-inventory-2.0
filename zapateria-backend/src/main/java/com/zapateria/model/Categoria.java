@@ -14,7 +14,7 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_CATEGORIA")
-    private Integer idCategoria;
+    private Long idCategoria;
 
     /** Nombre de la categoría (obligatorio, máximo 100 caracteres). */
     @Column(name = "NOMBRE", nullable = false, length = 100)
@@ -24,15 +24,15 @@ public class Categoria {
     public Categoria() {}
 
     /** Constructor con todos los campos */
-    public Categoria(Integer idCategoria, String nombre) {
+    public Categoria(Long idCategoria, String nombre) {
         this.idCategoria = idCategoria;
         this.nombre = nombre;
     }
 
     // ========== Getters y Setters ==========
 
-    public Integer getIdCategoria() { return idCategoria; }
-    public void setIdCategoria(Integer idCategoria) { this.idCategoria = idCategoria; }
+    public Long getIdCategoria() { return idCategoria; }
+    public void setIdCategoria(Long idCategoria) { this.idCategoria = idCategoria; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

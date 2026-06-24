@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import api from '../services/api'
 
 /**
- * Barra de navegación principal del sistema de zapatería.
+ * Barra de navegación principal del sistema Shoes Store.
  * Muestra el estado de conexión con el backend en tiempo real.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
  */
@@ -35,7 +35,7 @@ function Navbar() {
     <nav className="navbar">
       {/* Marca / nombre del sistema */}
       <NavLink to="/" className="navbar-brand">
-        Zapatería
+        SHOES<span className="brand-dot">.</span>STORE
       </NavLink>
 
       {/* Módulos de navegación */}

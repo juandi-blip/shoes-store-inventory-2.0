@@ -1,6 +1,7 @@
 package com.zapateria.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * Entidad que representa un producto (zapato) dentro del sistema de gestión
@@ -15,7 +16,7 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_PRODUCTO")
-    private Integer idProducto;
+    private Long idProducto;
 
     /** Nombre del producto (zapato) */
     @Column(name = "NOMBRE", nullable = false, length = 100)
@@ -25,21 +26,21 @@ public class Producto {
     @Column(name = "DESCRIPCION", columnDefinition = "TEXT")
     private String descripcion;
 
-    /** Precio de venta del producto */
+    /** Precio de venta del producto (BigDecimal para precisión monetaria) */
     @Column(name = "PRECIO", nullable = false, precision = 10, scale = 2)
-    private Double precio;
+    private BigDecimal precio;
 
     /** Cantidad disponible en inventario */
     @Column(name = "STOCK", nullable = false)
     private Integer stock;
 
     /** Categoría a la que pertenece el producto (relación ManyToOne) */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_CATEGORIA", nullable = false)
     private Categoria categoria;
 
     /** Proveedor que suministra el producto (relación ManyToOne) */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_PROVEEDOR", nullable = false)
     private Proveedor proveedor;
 
@@ -47,7 +48,7 @@ public class Producto {
     public Producto() {}
 
     /** Constructor con todos los campos */
-    public Producto(Integer idProducto, String nombre, String descripcion, Double precio,
+    public Producto(Long idProducto, String nombre, String descripcion, BigDecimal precio,
                     Integer stock, Categoria categoria, Proveedor proveedor) {
         this.idProducto = idProducto;
         this.nombre = nombre;
@@ -60,8 +61,8 @@ public class Producto {
 
     // ========== Getters y Setters ==========
 
-    public Integer getIdProducto() { return idProducto; }
-    public void setIdProducto(Integer idProducto) { this.idProducto = idProducto; }
+    public Long getIdProducto() { return idProducto; }
+    public void setIdProducto(Long idProducto) { this.idProducto = idProducto; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
@@ -69,8 +70,8 @@ public class Producto {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public Double getPrecio() { return precio; }
-    public void setPrecio(Double precio) { this.precio = precio; }
+    public BigDecimal getPrecio() { return precio; }
+    public void setPrecio(BigDecimal precio) { this.precio = precio; }
 
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }

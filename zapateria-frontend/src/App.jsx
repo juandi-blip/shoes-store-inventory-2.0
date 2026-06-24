@@ -7,7 +7,7 @@ import ProveedoresPage from './pages/ProveedoresPage'
 import './App.css'
 
 /**
- * Componente raíz de la aplicación Zapatería.
+ * Componente raíz de la aplicación Shoes Store.
  * Configura el enrutamiento con React Router, el Navbar,
  * la barra de anuncio superior y el footer.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
@@ -36,7 +36,7 @@ function App() {
 
         {/* Pie de página */}
         <footer className="footer">
-          © 2026 Zapatería. Todos los derechos reservados.
+          © 2026 Shoes Store. Todos los derechos reservados.
           Sistema desarrollado para SENA GA7-220501096-AA3-EV01.
         </footer>
       </div>

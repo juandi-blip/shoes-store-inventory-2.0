@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../services/api'
 
 /**
- * Página de inicio del sistema de gestión de zapatería.
+ * Página de inicio del sistema de gestión Shoes Store.
  * Muestra un panel de bienvenida, estado de conexión al backend
  * y accesos rápidos a los módulos principales.
  * Proyecto SENA GA7-220501096-AA3-EV01 - Evidencia de aprendizaje.
@@ -43,8 +43,9 @@ function HomePage() {
       <div className="hero-section">
         <h1 className="hero-title">Gestión de Inventario</h1>
         <p className="hero-description">
-          Plataforma interna para la administración de stock, control de
-          proveedores y actualización del catálogo oficial de la zapatería.
+          Plataforma interna de Shoes Store para la administración de stock,
+          control de proveedores y actualización del catálogo de sneakers,
+          tenis y calzado a la moda.
         </p>
 
         {/* Bloque de error si el backend no está disponible */}
@@ -78,8 +79,8 @@ function HomePage() {
           <span className="feature-card-icon">🏷</span>
           <div className="feature-card-title">Categorías</div>
           <p className="feature-card-desc">
-            Administre las categorías del catálogo: zapatos, botas,
-            sandalias, tenis y más.
+            Administre las categorías del catálogo: sneakers, running,
+            basketball, casual y más.
           </p>
         </Link>
 

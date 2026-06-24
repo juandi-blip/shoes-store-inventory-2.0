@@ -1,10 +1,10 @@
 -- ============================================
 -- Script de creación de base de datos
--- Proyecto: Sistema de Gestión de Zapatería
+-- Proyecto: Shoes Store - Sistema de Gestión de Inventario
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS zapateria;
-USE zapateria;
+CREATE DATABASE IF NOT EXISTS shoesstore;
+USE shoesstore;
 
 -- Tabla de categorías
 CREATE TABLE categoria (

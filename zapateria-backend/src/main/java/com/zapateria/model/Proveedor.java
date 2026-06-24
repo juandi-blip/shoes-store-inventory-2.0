@@ -14,7 +14,7 @@ public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_PROVEEDOR")
-    private Integer idProveedor;
+    private Long idProveedor;
 
     /** Nombre comercial del proveedor */
     @Column(name = "NOMBRE", nullable = false, length = 100)
@@ -32,7 +32,7 @@ public class Proveedor {
     public Proveedor() {}
 
     /** Constructor con todos los campos */
-    public Proveedor(Integer idProveedor, String nombre, String telefono, String direccion) {
+    public Proveedor(Long idProveedor, String nombre, String telefono, String direccion) {
         this.idProveedor = idProveedor;
         this.nombre = nombre;
         this.telefono = telefono;
@@ -41,8 +41,8 @@ public class Proveedor {
 
     // ========== Getters y Setters ==========
 
-    public Integer getIdProveedor() { return idProveedor; }
-    public void setIdProveedor(Integer idProveedor) { this.idProveedor = idProveedor; }
+    public Long getIdProveedor() { return idProveedor; }
+    public void setIdProveedor(Long idProveedor) { this.idProveedor = idProveedor; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
