@@ -1,160 +1,142 @@
-# Sistema de Gestión de Zapatería
+# Shoes Store — Sistema de Gestión de Inventario
 
-Proyecto de evidencia de aprendizaje **GA7-220501096-AA3-EV01** del programa de Análisis y Desarrollo de Software (ADSO) del SENA.
+Evidencia de aprendizaje **GA7-220501096-AA3-EV01** — Codificación de módulos del software.  
+Programa Análisis y Desarrollo de Software (ADSO), ficha 228118, SENA.  
+Aprendiz: **Juan David Florez**
 
 ## Descripción
 
-Sistema de gestión para una zapatería con módulos de:
-- **Productos** (CRUD completo)
-- **Categorías** (CRUD completo)
-- **Proveedores** (CRUD completo)
+Sistema interno de gestión de inventario para **Shoes Store** (tienda de sneakers, tenis y calzado a la moda), con CRUD completo para:
 
-## Stack Tecnológico
+- **Productos** — nombre, descripción, precio, stock, categoría y proveedor
+- **Categorías** — clasificación del catálogo (sneakers, running, basketball, casual…)
+- **Proveedores** — razón social, teléfono y dirección
+
+## Stack tecnológico
 
 | Capa | Tecnología |
-|------|------------|
-| Backend | Spring Boot 3.2.5 + Java |
-| Frontend | React + Vite |
-| Base de datos | MySQL 8 |
-| ORM | JPA/Hibernate |
+|------|-----------|
+| Backend | Spring Boot 3.2.5 / Java 17 |
+| Frontend | React 18 + Vite / pnpm |
+| Base de datos | MySQL 8 (`shoesstore`) |
+| ORM | JPA / Hibernate 6.4 |
 | HTTP Client | Axios |
-| Estilos | CSS Dark Monochromatic |
+| Fuente | Poppins (Google Fonts) |
+| Estilos | CSS dark monochromatic (`#0d0d0d`) |
 
-## Diseño
+## Diseño visual
 
-El sistema utiliza un diseño **Dark Monochromatic** inspirado eninterfaces premium de tiendas de calzado:
+Réplica del diseño de Shoes.Store: dark monocromo, sin color acento, tipografía Poppins.
 
-### Paleta de Colores
-
-| Elemento | Color | Código |
-|----------|-------|--------|
-| Fondo principal | Negro profundo | `#0a0a0a` |
-| Fondo tarjetas | Gris oscuro | `#141414` |
-| Fondo elevado | Gris medio | `#1e1e1e` |
-| Fondo inputs | Gris oscuro | `#1a1a1a` |
-| Texto principal | Blanco | `#ffffff` |
-| Texto secundario | Gris claro | `#cccccc` |
-| Texto muted | Gris medio | `#888888` |
-| Bordes | Gris oscuro | `#2a2a2a` |
-| Acento | Índigo | `#6366f1` |
-| Peligro | Rojo | `#ef4444` |
-| Éxito | Verde | `#4ade80` |
-| Advertencia | Amarillo | `#fbbf24` |
-
-### Características Visuales
-
-- Tema oscuro completo (dark mode)
-- Bordes sutiles y sombras minimalistas
-- Botones con bordes redondeados (pill)
-- Tablas con hover sutil
-- Modales con efecto blur (backdrop-filter)
-- Transiciones suaves (150ms)
-- Tipografía Inter con pesos variados
-- Texto en mayúsculas con letter-spacing para labels
+| Token | Valor |
+|-------|-------|
+| Fondo principal | `#0d0d0d` |
+| Fondo tarjetas | `#161616` |
+| Fondo elevado | `#1e1e1e` |
+| Fondo hover | `#252525` |
+| Texto principal | `#ffffff` |
+| Texto secundario | `#b0b0b0` |
+| Texto muted | `#737373` |
+| Bordes | `rgba(255,255,255,0.08)` |
+| Bordes hover | `rgba(255,255,255,0.16)` |
+| Peligro | `#ef4444` |
+| Éxito | `#4ade80` |
 
 ## Requisitos
 
-- Java JDK 17 o superior
+- Java JDK 17 (Spring Boot 3.2.5 no soporta JDK 21+)
 - MySQL Server 8
 - Node.js 18+ y pnpm
-- Maven (incluido en el proyecto via wrapper)
+- Maven 3.9+ (el `mvnw` incluido puede no funcionar en todas las máquinas; usar Maven standalone si es necesario)
 
 ## Instalación
 
-### 1. Base de Datos
-
-Ejecuta el script `schema.sql` en MySQL Workbench:
+### 1. Base de datos
 
 ```sql
--- O ejecuta desde terminal:
+-- En MySQL Workbench o terminal:
 mysql -u root -p < schema.sql
 ```
+
+Crea la base `shoesstore` con las tablas `categoria`, `proveedor` y `producto`.
 
 ### 2. Backend
 
 ```bash
 cd zapateria-backend
 
-# Editar application.properties y colocar tu contraseña de MySQL:
-# spring.datasource.password=TU_CONTRASEÑA
+# Configurar variable de entorno con la contraseña de MySQL
+# Windows (PowerShell):
+$env:DB_PASSWORD = "tu_contraseña_mysql"
 
-# Ejecutar el servidor
+# Linux/Mac:
+export DB_PASSWORD=tu_contraseña_mysql
+
+# Levantar servidor (puerto 8080)
 mvn spring-boot:run
 ```
 
-El backend estará disponible en: `http://localhost:8080`
+> La contraseña **nunca** va en `application.properties`. Se lee de la variable de entorno `DB_PASSWORD`.
 
 ### 3. Frontend
 
 ```bash
 cd zapateria-frontend
-
-# Instalar dependencias
 pnpm install
-
-# Ejecutar en modo desarrollo
 pnpm dev
 ```
 
-El frontend estará disponible en: `http://localhost:5173`
+Frontend disponible en `http://localhost:5173`
 
 ## Endpoints API
 
-### Productos
+### Productos `/api/productos`
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | /api/productos | Listar todos |
-| GET | /api/productos/{id} | Obtener uno |
-| POST | /api/productos | Crear |
-| PUT | /api/productos/{id} | Actualizar |
-| DELETE | /api/productos/{id} | Eliminar |
+| GET | `/api/productos` | Listar todos |
+| GET | `/api/productos/{id}` | Obtener uno |
+| POST | `/api/productos` | Crear |
+| PUT | `/api/productos/{id}` | Actualizar |
+| DELETE | `/api/productos/{id}` | Eliminar |
 
-### Categorías
+### Categorías `/api/categorias`
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | /api/categorias | Listar todas |
-| GET | /api/categorias/{id} | Obtener una |
-| POST | /api/categorias | Crear |
-| PUT | /api/categorias/{id} | Actualizar |
-| DELETE | /api/categorias/{id} | Eliminar |
+| GET | `/api/categorias` | Listar todas |
+| GET | `/api/categorias/{id}` | Obtener una |
+| POST | `/api/categorias` | Crear |
+| PUT | `/api/categorias/{id}` | Actualizar |
+| DELETE | `/api/categorias/{id}` | Eliminar |
 
-### Proveedores
+### Proveedores `/api/proveedores`
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | /api/proveedores | Listar todos |
-| GET | /api/proveedores/{id} | Obtener uno |
-| POST | /api/proveedores | Crear |
-| PUT | /api/proveedores/{id} | Actualizar |
-| DELETE | /api/proveedores/{id} | Eliminar |
+| GET | `/api/proveedores` | Listar todos |
+| GET | `/api/proveedores/{id}` | Obtener uno |
+| POST | `/api/proveedores` | Crear |
+| PUT | `/api/proveedores/{id}` | Actualizar |
+| DELETE | `/api/proveedores/{id}` | Eliminar |
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```
 GA7-220501096-AA3-EV01/
-├── schema.sql                    # Script de base de datos
+├── schema.sql
 ├── zapateria-backend/
 │   └── src/main/java/com/zapateria/
-│       ├── model/                # Entidades JPA
-│       ├── repository/           # Repositorios JPA
-│       ├── service/              # Lógica de negocio
-│       ├── controller/           # Controladores REST
-│       └── config/               # Configuración CORS
+│       ├── model/        # Entidades JPA (Producto, Categoria, Proveedor)
+│       ├── repository/   # JpaRepository<Entidad, Long>
+│       ├── service/      # Lógica de negocio
+│       ├── controller/   # Controladores REST
+│       └── config/       # CORS (WebConfig)
 └── zapateria-frontend/
     └── src/
-        ├── pages/                # Páginas de CRUD
-        ├── components/           # Componentes reutilizables
-        └── services/             # Conexión API
+        ├── pages/        # ProductosPage, CategoriasPage, ProveedoresPage
+        ├── components/   # Navbar, formularios, tablas
+        └── services/     # api.js (Axios → localhost:8080)
 ```
 
-## Notas
-
-- El backend debe estar ejecutándose para que el frontend funcione
-- La contraseña de MySQL debe configurarse en `application.properties`
-- El esquema de base de datos está sincronizado con el proyecto original Miproyecto
-
-## Autor
-
-Juan David Florez - Programa ADSO SENA
+> Los nombres internos de carpetas y paquete Java conservan `zapateria`; la marca visible y la base de datos usan **Shoes Store** / `shoesstore`.
 
 ## Repositorio
 
