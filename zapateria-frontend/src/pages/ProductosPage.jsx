@@ -156,6 +156,8 @@ function ProductosPage() {
                 <th>Descripción</th>
                 <th>Precio</th>
                 <th>Stock</th>
+                <th>Talla</th>
+                <th>Color</th>
                 <th>Categoría</th>
                 <th>Proveedor</th>
                 <th>Acciones</th>
@@ -164,7 +166,7 @@ function ProductosPage() {
             <tbody>
               {productos.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="empty-state-cell">
+                  <td colSpan="10" className="empty-state-cell">
                     <p className="empty-state-text">
                       No hay productos registrados en el inventario.
                     </p>
@@ -181,6 +183,8 @@ function ProductosPage() {
                     <td>{producto.descripcion || '—'}</td>
                     <td>{formatearPrecio(producto.precio)}</td>
                     <td>{producto.stock ?? 0}</td>
+                    <td>{producto.talla || '—'}</td>
+                    <td>{producto.color || '—'}</td>
                     <td>{producto.categoria?.nombre || '—'}</td>
                     <td>{producto.proveedor?.nombre || '—'}</td>
                     <td>
@@ -239,6 +243,9 @@ function ProductoForm({ producto, categorias, proveedores, onGuardar, onCancelar
     descripcion: producto?.descripcion || '',
     precio:      producto?.precio || '',
     stock:       producto?.stock || '',
+    talla:       producto?.talla || '',
+    color:       producto?.color || '',
+    imagenUrl:   producto?.imagenUrl || '',
     idCategoria: producto?.categoria?.idCategoria || '',
     idProveedor: producto?.proveedor?.idProveedor || '',
   })
@@ -262,6 +269,9 @@ function ProductoForm({ producto, categorias, proveedores, onGuardar, onCancelar
       descripcion: formulario.descripcion,
       precio:      parseFloat(formulario.precio) || 0,
       stock:       parseInt(formulario.stock) || 0,
+      talla:       formulario.talla || null,
+      color:       formulario.color || null,
+      imagenUrl:   formulario.imagenUrl || null,
       categoria:   { idCategoria: parseInt(formulario.idCategoria) },
       proveedor:   { idProveedor: parseInt(formulario.idProveedor) },
     }
@@ -304,6 +314,45 @@ function ProductoForm({ producto, categorias, proveedores, onGuardar, onCancelar
                 value={formulario.descripcion}
                 onChange={manejarCambio}
                 placeholder="Ej. Silueta retro, cámara de aire visible, amortiguación premium..."
+              />
+            </div>
+
+            {/* Talla y Color en dos columnas */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="talla">Talla</label>
+                <input
+                  type="text"
+                  id="talla"
+                  name="talla"
+                  value={formulario.talla}
+                  onChange={manejarCambio}
+                  placeholder="Ej. 38, 40, 42"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="color">Color</label>
+                <input
+                  type="text"
+                  id="color"
+                  name="color"
+                  value={formulario.color}
+                  onChange={manejarCambio}
+                  placeholder="Ej. Negro, Blanco"
+                />
+              </div>
+            </div>
+
+            {/* URL de imagen */}
+            <div className="form-group">
+              <label htmlFor="imagenUrl">URL de Imagen</label>
+              <input
+                type="text"
+                id="imagenUrl"
+                name="imagenUrl"
+                value={formulario.imagenUrl}
+                onChange={manejarCambio}
+                placeholder="https://ejemplo.com/imagen.jpg"
               />
             </div>
 

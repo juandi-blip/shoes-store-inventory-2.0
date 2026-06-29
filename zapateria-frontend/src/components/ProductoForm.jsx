@@ -69,8 +69,8 @@ function ProductoForm({ onSubmit, producto, onCancel }) {
         talla: producto.talla || '',
         color: producto.color || '',
         imagenUrl: producto.imagenUrl || '',
-        categoriaId: producto.categoria?.id || producto.categoriaId || '',
-        proveedorId: producto.proveedor?.id || producto.proveedorId || '',
+        categoriaId: producto.categoria?.idCategoria || producto.categoriaId || '',
+        proveedorId: producto.proveedor?.idProveedor || producto.proveedorId || '',
       })
     }
   }, [producto])
@@ -123,18 +123,22 @@ function ProductoForm({ onSubmit, producto, onCancel }) {
     if (!validarCampos()) return
 
     try {
-      // Preparar payload con tipos de datos correctos
+      // Preparar payload con tipos de datos correctos y estructura anidada que espera el backend
       const payload = {
-        ...formData,
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
         precio: parseFloat(formData.precio),
         stock: parseInt(formData.stock),
-        categoriaId: parseInt(formData.categoriaId),
-        proveedorId: parseInt(formData.proveedorId),
+        talla: formData.talla || null,
+        color: formData.color || null,
+        imagenUrl: formData.imagenUrl || null,
+        categoria: { idCategoria: parseInt(formData.categoriaId) },
+        proveedor: { idProveedor: parseInt(formData.proveedorId) },
       }
 
-      if (producto && producto.id) {
+      if (producto && producto.idProducto) {
         // Actualizar producto existente con PUT
-        await api.put(`/productos/${producto.id}`, payload)
+        await api.put(`/productos/${producto.idProducto}`, payload)
       } else {
         // Crear nuevo producto con POST
         await api.post('/productos', payload)
@@ -259,7 +263,7 @@ function ProductoForm({ onSubmit, producto, onCancel }) {
           >
             <option value="">Seleccione una categoría</option>
             {categorias.map((cat) => (
-              <option key={cat.id} value={cat.id}>
+              <option key={cat.idCategoria} value={cat.idCategoria}>
                 {cat.nombre}
               </option>
             ))}
@@ -277,7 +281,7 @@ function ProductoForm({ onSubmit, producto, onCancel }) {
           >
             <option value="">Seleccione un proveedor</option>
             {proveedores.map((prov) => (
-              <option key={prov.id} value={prov.id}>
+              <option key={prov.idProveedor} value={prov.idProveedor}>
                 {prov.nombre}
               </option>
             ))}

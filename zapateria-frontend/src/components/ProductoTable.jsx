@@ -50,8 +50,8 @@ function ProductoTable({ productos, onEdit, onDelete }) {
         </thead>
         <tbody>
           {productos.map((producto) => (
-            <tr key={producto.id}>
-              <td>{producto.id}</td>
+            <tr key={producto.idProducto}>
+              <td>{producto.idProducto}</td>
               <td>{producto.nombre}</td>
               <td>{producto.descripcion || '-'}</td>
               {/* Precio formateado en pesos colombianos */}
@@ -76,7 +76,7 @@ function ProductoTable({ productos, onEdit, onDelete }) {
                 </button>
                 <button
                   className="btn-delete"
-                  onClick={() => onDelete(producto.id)}
+                  onClick={() => onDelete(producto.idProducto)}
                   title="Eliminar producto"
                 >
                   Eliminar
