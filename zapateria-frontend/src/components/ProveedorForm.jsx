@@ -3,28 +3,27 @@ import api from '../services/api'
 
 /**
  * Componente de formulario para crear o editar proveedores.
- * 
- * Gestiona el formulario de proveedores con campos:
+ *
+ * Gestiona el formulario de proveedores con los campos reales del backend:
  * - Nombre (obligatorio)
- * - Contacto (opcional)
  * - Teléfono (opcional)
- * - Email (opcional)
  * - Dirección (opcional)
- * 
+ *
+ * Nota: los campos 'contacto' y 'email' fueron eliminados porque no existen
+ * en la entidad JPA Proveedor del backend.
+ *
  * Realiza validación de campos obligatorios antes de enviar
  * y peticiones POST (crear) o PUT (actualizar) al backend.
- * 
- * @param {Function} onSubmit - Callback ejecutado al enviar exitosamente
+ *
+ * @param {Function} onSubmit  - Callback ejecutado al enviar exitosamente
  * @param {Object|null} proveedor - Proveedor a editar (null para crear nuevo)
- * @param {Function} onCancel - Callback para cancelar la operación
+ * @param {Function} onCancel  - Callback para cancelar la operación
  */
 function ProveedorForm({ onSubmit, proveedor, onCancel }) {
-  // Estado del formulario con valores por defecto vacíos
+  // Estado del formulario — solo campos que existen en el backend
   const [formData, setFormData] = useState({
-    nombre: '',
-    contacto: '',
-    telefono: '',
-    email: '',
+    nombre:    '',
+    telefono:  '',
     direccion: '',
   })
 
@@ -32,24 +31,22 @@ function ProveedorForm({ onSubmit, proveedor, onCancel }) {
   const [error, setError] = useState('')
 
   /**
-   * Efecto para cargar los datos del proveedor cuando se edita
-   * Se ejecuta cuando cambia la prop 'proveedor'
+   * Efecto para cargar los datos del proveedor cuando se edita.
+   * Se ejecuta cuando cambia la prop 'proveedor'.
    */
   useEffect(() => {
     if (proveedor) {
       setFormData({
-        nombre: proveedor.nombre || '',
-        contacto: proveedor.contacto || '',
-        telefono: proveedor.telefono || '',
-        email: proveedor.email || '',
+        nombre:    proveedor.nombre    || '',
+        telefono:  proveedor.telefono  || '',
         direccion: proveedor.direccion || '',
       })
     }
   }, [proveedor])
 
   /**
-   * Maneja los cambios en los campos del formulario
-   * Actualiza el estado formData con el valor del campo modificado
+   * Maneja los cambios en los campos del formulario.
+   * Actualiza el estado formData con el valor del campo modificado.
    */
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -57,7 +54,7 @@ function ProveedorForm({ onSubmit, proveedor, onCancel }) {
   }
 
   /**
-   * Valida que los campos obligatorios estén completos
+   * Valida que los campos obligatorios estén completos.
    * @returns {boolean} true si la validación pasa
    */
   const validarCampos = () => {
@@ -70,8 +67,8 @@ function ProveedorForm({ onSubmit, proveedor, onCancel }) {
   }
 
   /**
-   * Maneja el envío del formulario
-   * Realiza validación, envía datos al backend y notifica al componente padre
+   * Maneja el envío del formulario.
+   * Usa proveedor.idProveedor (no proveedor.id) para el PUT.
    */
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -79,9 +76,9 @@ function ProveedorForm({ onSubmit, proveedor, onCancel }) {
     if (!validarCampos()) return
 
     try {
-      if (proveedor && proveedor.id) {
+      if (proveedor && proveedor.idProveedor) {
         // Actualizar proveedor existente con PUT
-        await api.put(`/proveedores/${proveedor.id}`, formData)
+        await api.put(`/proveedores/${proveedor.idProveedor}`, formData)
       } else {
         // Crear nuevo proveedor con POST
         await api.post('/proveedores', formData)
@@ -114,20 +111,7 @@ function ProveedorForm({ onSubmit, proveedor, onCancel }) {
           />
         </div>
 
-        {/* Campo: Persona de contacto */}
-        <div className="form-group">
-          <label htmlFor="contacto">Contacto</label>
-          <input
-            type="text"
-            id="contacto"
-            name="contacto"
-            value={formData.contacto}
-            onChange={handleChange}
-            placeholder="Nombre de la persona de contacto"
-          />
-        </div>
-
-        {/* Campo: Teléfono */}
+        {/* Campo: Teléfono de contacto */}
         <div className="form-group">
           <label htmlFor="telefono">Teléfono</label>
           <input
@@ -140,20 +124,7 @@ function ProveedorForm({ onSubmit, proveedor, onCancel }) {
           />
         </div>
 
-        {/* Campo: Correo electrónico */}
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="correo@ejemplo.com"
-          />
-        </div>
-
-        {/* Campo: Dirección */}
+        {/* Campo: Dirección del proveedor */}
         <div className="form-group">
           <label htmlFor="direccion">Dirección</label>
           <input

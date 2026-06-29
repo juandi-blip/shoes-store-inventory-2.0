@@ -1,15 +1,17 @@
 /**
  * Componente de tabla para mostrar la lista de categorías.
- * 
+ *
  * Renderiza una tabla con los campos de cada categoría:
- * - ID
+ * - ID (idCategoria)
  * - Nombre
- * - Descripción
  * - Botones de editar y eliminar
- * 
- * @param {Array} categorias - Lista de categorías a mostrar
- * @param {Function} onEdit - Callback al hacer clic en editar
- * @param {Function} onDelete - Callback al hacer clic en eliminar
+ *
+ * Nota: el modelo Categoria en el backend solo tiene idCategoria y nombre.
+ * La columna 'Descripción' fue eliminada porque no existe en la entidad JPA.
+ *
+ * @param {Array}    categorias - Lista de categorías a mostrar
+ * @param {Function} onEdit     - Callback al hacer clic en editar
+ * @param {Function} onDelete   - Callback al hacer clic en eliminar
  */
 function CategoriaTable({ categorias, onEdit, onDelete }) {
   // Mostrar mensaje cuando no hay categorías registradas
@@ -24,16 +26,15 @@ function CategoriaTable({ categorias, onEdit, onDelete }) {
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Descripción</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {categorias.map((categoria) => (
-            <tr key={categoria.id}>
-              <td>{categoria.id}</td>
+            // Se usa idCategoria como key (campo real del backend)
+            <tr key={categoria.idCategoria}>
+              <td>{categoria.idCategoria}</td>
               <td>{categoria.nombre}</td>
-              <td>{categoria.descripcion || '-'}</td>
               <td className="acciones">
                 <button
                   className="btn-edit"
@@ -44,7 +45,7 @@ function CategoriaTable({ categorias, onEdit, onDelete }) {
                 </button>
                 <button
                   className="btn-delete"
-                  onClick={() => onDelete(categoria.id)}
+                  onClick={() => onDelete(categoria.idCategoria)}
                   title="Eliminar categoría"
                 >
                   Eliminar

@@ -1,18 +1,19 @@
 /**
  * Componente de tabla para mostrar la lista de proveedores.
- * 
- * Renderiza una tabla con los campos de cada proveedor:
- * - ID
+ *
+ * Renderiza una tabla con los campos reales del backend:
+ * - ID (idProveedor)
  * - Nombre
- * - Contacto
  * - Teléfono
- * - Email
  * - Dirección
  * - Botones de editar y eliminar
- * 
- * @param {Array} proveedores - Lista de proveedores a mostrar
- * @param {Function} onEdit - Callback al hacer clic en editar
- * @param {Function} onDelete - Callback al hacer clic en eliminar
+ *
+ * Nota: las columnas 'Contacto' y 'Email' fueron eliminadas porque esos
+ * campos no existen en la entidad JPA Proveedor del backend.
+ *
+ * @param {Array}    proveedores - Lista de proveedores a mostrar
+ * @param {Function} onEdit      - Callback al hacer clic en editar
+ * @param {Function} onDelete    - Callback al hacer clic en eliminar
  */
 function ProveedorTable({ proveedores, onEdit, onDelete }) {
   // Mostrar mensaje cuando no hay proveedores registrados
@@ -27,21 +28,18 @@ function ProveedorTable({ proveedores, onEdit, onDelete }) {
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Contacto</th>
             <th>Teléfono</th>
-            <th>Email</th>
             <th>Dirección</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {proveedores.map((proveedor) => (
-            <tr key={proveedor.id}>
-              <td>{proveedor.id}</td>
+            // Se usa idProveedor como key (campo real del backend)
+            <tr key={proveedor.idProveedor}>
+              <td>{proveedor.idProveedor}</td>
               <td>{proveedor.nombre}</td>
-              <td>{proveedor.contacto || '-'}</td>
               <td>{proveedor.telefono || '-'}</td>
-              <td>{proveedor.email || '-'}</td>
               <td>{proveedor.direccion || '-'}</td>
               <td className="acciones">
                 <button
@@ -53,7 +51,7 @@ function ProveedorTable({ proveedores, onEdit, onDelete }) {
                 </button>
                 <button
                   className="btn-delete"
-                  onClick={() => onDelete(proveedor.id)}
+                  onClick={() => onDelete(proveedor.idProveedor)}
                   title="Eliminar proveedor"
                 >
                   Eliminar

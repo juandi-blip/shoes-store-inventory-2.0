@@ -3,44 +3,44 @@ import api from '../services/api'
 
 /**
  * Componente de formulario para crear o editar categorías.
- * 
- * Gestiona el formulario de categorías con campos:
+ *
+ * Gestiona el formulario de categorías con el campo:
  * - Nombre (obligatorio)
- * - Descripción (opcional)
- * 
+ *
+ * Nota: el modelo Categoria en el backend solo tiene idCategoria y nombre.
+ * No existe campo 'descripcion' en la entidad JPA.
+ *
  * Realiza validación de campos obligatorios antes de enviar
  * y peticiones POST (crear) o PUT (actualizar) al backend.
- * 
- * @param {Function} onSubmit - Callback ejecutado al enviar exitosamente
+ *
+ * @param {Function} onSubmit  - Callback ejecutado al enviar exitosamente
  * @param {Object|null} categoria - Categoría a editar (null para crear nueva)
- * @param {Function} onCancel - Callback para cancelar la operación
+ * @param {Function} onCancel  - Callback para cancelar la operación
  */
 function CategoriaForm({ onSubmit, categoria, onCancel }) {
-  // Estado del formulario con valores por defecto vacíos
+  // Estado del formulario — solo 'nombre', que es el único campo del backend
   const [formData, setFormData] = useState({
     nombre: '',
-    descripcion: '',
   })
 
   // Estado para mensajes de error de validación
   const [error, setError] = useState('')
 
   /**
-   * Efecto para cargar los datos de la categoría cuando se edita
-   * Se ejecuta cuando cambia la prop 'categoria'
+   * Efecto para cargar los datos de la categoría cuando se edita.
+   * Se ejecuta cuando cambia la prop 'categoria'.
    */
   useEffect(() => {
     if (categoria) {
       setFormData({
         nombre: categoria.nombre || '',
-        descripcion: categoria.descripcion || '',
       })
     }
   }, [categoria])
 
   /**
-   * Maneja los cambios en los campos del formulario
-   * Actualiza el estado formData con el valor del campo modificado
+   * Maneja los cambios en los campos del formulario.
+   * Actualiza el estado formData con el valor del campo modificado.
    */
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -48,7 +48,7 @@ function CategoriaForm({ onSubmit, categoria, onCancel }) {
   }
 
   /**
-   * Valida que los campos obligatorios estén completos
+   * Valida que los campos obligatorios estén completos.
    * @returns {boolean} true si la validación pasa
    */
   const validarCampos = () => {
@@ -61,8 +61,8 @@ function CategoriaForm({ onSubmit, categoria, onCancel }) {
   }
 
   /**
-   * Maneja el envío del formulario
-   * Realiza validación, envía datos al backend y notifica al componente padre
+   * Maneja el envío del formulario.
+   * Usa categoria.idCategoria (no categoria.id) para el PUT.
    */
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -70,9 +70,9 @@ function CategoriaForm({ onSubmit, categoria, onCancel }) {
     if (!validarCampos()) return
 
     try {
-      if (categoria && categoria.id) {
+      if (categoria && categoria.idCategoria) {
         // Actualizar categoría existente con PUT
-        await api.put(`/categorias/${categoria.id}`, formData)
+        await api.put(`/categorias/${categoria.idCategoria}`, formData)
       } else {
         // Crear nueva categoría con POST
         await api.post('/categorias', formData)
@@ -102,19 +102,6 @@ function CategoriaForm({ onSubmit, categoria, onCancel }) {
             value={formData.nombre}
             onChange={handleChange}
             placeholder="Ej: Deportivos, Formales, Casuales"
-          />
-        </div>
-
-        {/* Campo: Descripción de la categoría */}
-        <div className="form-group">
-          <label htmlFor="descripcion">Descripción</label>
-          <textarea
-            id="descripcion"
-            name="descripcion"
-            value={formData.descripcion}
-            onChange={handleChange}
-            placeholder="Descripción de la categoría"
-            rows="3"
           />
         </div>
 
